@@ -11,208 +11,281 @@
 <meta property="og:image" content="https://oncuecosmetics.com/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://api.fontshare.com">
-<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800,900&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="img/portrait-hero.webp">
 <style>
 :root{
-  --bg:#F4F3F1; --surface:#FFFFFF; --ink:#141414; --muted:#5E5E5E; --line:#DEDCD8;
-  --accent:#D9441F; --accent-ink:#FFFFFF;
-  --r:14px; --pill:999px;
+  --mustard:#E3A21A; --teal:#0F4A49; --coral:#D9472B; --ink:#16110E; --cream:#F3E7D3; --pink:#D63F7A;
   --display:"Cabinet Grotesk",ui-sans-serif,system-ui,sans-serif;
   --body:"Satoshi",ui-sans-serif,system-ui,sans-serif;
 }
-@media (prefers-color-scheme:dark){
-  :root{ --bg:#121212; --surface:#1B1B1B; --ink:#F1F0EE; --muted:#A9A7A3; --line:#2C2C2C; --accent:#F0592F; --accent-ink:#121212; }
-}
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body{background:var(--ink);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
 a{color:inherit}
-.wrap{max-width:1280px;margin:0 auto;padding:0 32px}
-@media (max-width:767px){.wrap{padding:0 18px}}
+img{display:block;max-width:100%}
+/* paper grain over everything */
+body::after{content:"";position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.14;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 
-/* nav */
-nav{height:72px;display:flex;align-items:center;justify-content:space-between}
-.mark{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:-.02em}
-.star{width:22px;height:22px;color:var(--accent)}
+/* nav floats over the hero */
+nav{position:absolute;top:0;left:0;right:0;z-index:20;height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,3vw,40px)}
+.mark{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:900;font-size:26px;letter-spacing:-.02em;color:var(--ink)}
+.star{width:22px;height:22px;color:var(--coral)}
 @media (prefers-reduced-motion:no-preference){.star{animation:spin 18s linear infinite}}
 @keyframes spin{to{transform:rotate(360deg)}}
-.btn{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 24px;border-radius:var(--pill);font-weight:700;font-size:15px;text-decoration:none;white-space:nowrap;transition:transform .2s cubic-bezier(.16,1,.3,1),background .2s}
+.btn{display:inline-flex;align-items:center;height:50px;padding:0 26px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;white-space:nowrap;transition:transform .2s cubic-bezier(.16,1,.3,1)}
 .btn:active{transform:scale(.98)}
-.btn-primary{background:var(--accent);color:var(--accent-ink)}
-.btn-primary:hover{transform:translateY(-1px)}
-.btn-ghost{border:1.5px solid var(--ink);color:var(--ink);height:40px;padding:0 18px;font-size:14px}
+.btn-ink{background:var(--ink);color:var(--cream)}
+.btn-ink:hover{transform:translateY(-1px)}
+.btn-cream{background:var(--cream);color:var(--ink)}
+.nav-cta{background:var(--cream);color:var(--ink);height:42px;padding:0 20px;font-size:14px}
 
-/* hero */
-.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;min-height:calc(100dvh - 72px);padding:24px 0 56px}
-.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(52px,7.4vw,108px);line-height:.95;letter-spacing:-.035em}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero p{margin-top:28px;max-width:30ch;font-size:20px;color:var(--muted)}
-.hero .btn{margin-top:36px}
-.stage{position:relative;height:min(78dvh,660px);aspect-ratio:4/5;justify-self:end;border-radius:var(--r);overflow:hidden;background:#E3A21A}
-.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 3.4s cubic-bezier(.16,1,.3,1)}
-.stage img.on{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.stage img{transition:none;transform:none}}
-
+/* hero: mustard block + painting canvas */
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);min-height:100dvh}
+.hero-copy{background:var(--mustard);padding:120px clamp(18px,3vw,40px) 48px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+.hero-copy::before{content:"";position:absolute;right:-1px;bottom:0;width:38%;height:22%;background:var(--teal)}
+.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(64px,8.6vw,148px);line-height:.86;letter-spacing:-.045em;position:relative}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero p{position:relative;margin-top:24px;max-width:28ch;font-size:19px;font-weight:500}
+.hero .btn{position:relative;margin-top:28px;align-self:flex-start}
+.canvas-wrap{position:relative;background:var(--teal);overflow:hidden;min-height:60vh}
+.canvas-wrap canvas,.canvas-wrap .still{position:absolute;inset:0;width:100%;height:100%}
+.still{object-fit:cover}
+.canvas-wrap.gl .still{opacity:0}
+.cue-tag{position:absolute;left:20px;bottom:18px;z-index:2;color:var(--cream);font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
+.cue-tag i{display:block;width:44px;height:3px;background:rgba(243,231,211,.35);position:relative;overflow:hidden}
+.cue-tag i b{position:absolute;inset:0;background:var(--cream);transform-origin:left;transform:scaleX(0)}
 @media (max-width:900px){
-  .hero{grid-template-columns:1fr;min-height:auto;padding-top:8px}
-  .stage{height:auto;width:100%;justify-self:stretch}
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-copy{padding-top:96px;min-height:auto}
+  .canvas-wrap{height:min(120vw,620px);min-height:0}
 }
 
-/* credo */
-.credo{padding:120px 0 96px;border-top:1px solid var(--line)}
-.credo p{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.6vw,64px);line-height:1.05;letter-spacing:-.03em;max-width:18ch}
-.credo p + p{color:var(--muted);margin-top:8px}
+/* credo on ink */
+.credo{background:var(--ink);color:var(--cream);padding:clamp(64px,9vw,120px) clamp(18px,3vw,40px)}
+.credo p{font-family:var(--display);font-weight:900;font-size:clamp(44px,7.4vw,124px);line-height:.92;letter-spacing:-.045em}
+.credo .w{display:inline-block;margin-right:.18em}
+.credo p:nth-child(2){color:var(--mustard)}
 
-/* belief */
-.belief{display:grid;grid-template-columns:5fr 7fr;gap:64px;padding:96px 0;align-items:start}
-.belief h2{font-family:var(--display);font-weight:800;font-size:clamp(32px,3.6vw,48px);line-height:1.05;letter-spacing:-.03em}
-.belief .copy p{font-size:19px;color:var(--muted);max-width:52ch}
-.belief .copy p + p{margin-top:18px}
-.belief .copy strong{color:var(--ink);font-weight:700}
-@media (max-width:900px){.belief{grid-template-columns:1fr;gap:24px;padding:72px 0}}
+/* belief: teal block + portrait */
+.belief{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);background:var(--teal);color:var(--cream)}
+.belief .copy{padding:clamp(48px,7vw,96px) clamp(18px,3vw,40px);display:flex;flex-direction:column;justify-content:center}
+.belief h2{font-family:var(--display);font-weight:900;font-size:clamp(40px,5vw,76px);line-height:.95;letter-spacing:-.04em;max-width:13ch}
+.belief p{margin-top:22px;font-size:19px;max-width:48ch;color:rgba(243,231,211,.86)}
+.belief strong{color:var(--mustard)}
+.belief .art{min-height:520px;background:url(img/look-violet.webp) center/cover no-repeat}
+@media (max-width:900px){.belief{grid-template-columns:1fr}.belief .art{min-height:110vw}}
 
-/* promises: asymmetric trio */
-.promises{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:auto auto;gap:16px;padding-bottom:112px}
-.p{border-radius:var(--r);padding:36px;background:var(--surface);border:1px solid var(--line)}
-.p h3{font-family:var(--display);font-weight:800;font-size:28px;line-height:1.1;letter-spacing:-.02em}
-.p p{margin-top:12px;color:var(--muted);max-width:40ch}
-.p.big{grid-row:span 2;background:var(--ink);color:var(--bg);border:0;display:flex;flex-direction:column;justify-content:flex-end;min-height:440px;position:relative;overflow:hidden}
-.p.big p{color:color-mix(in srgb,var(--bg) 72%,transparent)}
-.tones{position:absolute;top:36px;left:36px;right:36px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.tones span{aspect-ratio:1;border-radius:50%;background:var(--skin);position:relative}
-.tones span::after{content:"";position:absolute;inset:26%;border-radius:50%;background:var(--accent)}
-.p.tint{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
-@media (max-width:900px){.promises{grid-template-columns:1fr}.p.big{grid-row:auto;min-height:380px}}
+/* promise blocks */
+.blocks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.block{padding:clamp(32px,4vw,56px) clamp(18px,3vw,40px);min-height:360px;display:flex;flex-direction:column;justify-content:flex-end}
+.block h3{font-family:var(--display);font-weight:900;font-size:clamp(30px,2.8vw,42px);line-height:1;letter-spacing:-.03em}
+.block p{margin-top:12px;font-size:17px;max-width:32ch}
+.b1{background:var(--coral);color:var(--cream)}
+.b2{background:var(--cream)}
+.b3{background:var(--mustard)}
+.dots{display:flex;gap:10px;margin-bottom:auto}
+.dots span{width:38px;height:38px;border-radius:50%;background:var(--s)}
+@media (max-width:900px){.blocks{grid-template-columns:1fr}.block{min-height:260px}}
 
-/* circle */
-.circle{padding:112px 0;border-top:1px solid var(--line);text-align:center}
-.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:760px;margin:0 auto 56px}
-.duo img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r);display:block}
-.circle h2{font-family:var(--display);font-weight:800;font-size:clamp(40px,6vw,84px);line-height:1;letter-spacing:-.035em}
-.circle p{margin:22px auto 0;max-width:46ch;color:var(--muted);font-size:19px}
-.circle .btn{margin-top:34px}
+/* founding circle: coral */
+.circle{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:var(--coral);color:var(--cream)}
+.circle .duo{display:grid;grid-template-columns:1fr 1fr}
+.circle .duo img{width:100%;height:100%;min-height:520px;object-fit:cover}
+.circle .copy{padding:clamp(48px,6vw,88px) clamp(18px,3vw,40px);display:flex;flex-direction:column;justify-content:center}
+.circle h2{font-family:var(--display);font-weight:900;font-size:clamp(44px,5.6vw,92px);line-height:.92;letter-spacing:-.045em}
+.circle p{margin-top:20px;font-size:19px;max-width:40ch}
+.circle .btn{margin-top:28px;align-self:flex-start}
+@media (max-width:900px){.circle{grid-template-columns:1fr}.circle .duo img{min-height:70vw}}
 
-/* partners + faq */
-.lower{display:grid;grid-template-columns:5fr 7fr;gap:64px;padding:96px 0;border-top:1px solid var(--line)}
-.lower h2{font-family:var(--display);font-weight:800;font-size:32px;line-height:1.1;letter-spacing:-.02em}
-.lower .partners p{margin-top:14px;color:var(--muted);max-width:40ch}
-.lower .partners a.link{display:inline-block;margin-top:20px;font-weight:700;text-decoration-color:var(--accent);text-underline-offset:6px;text-decoration-thickness:2px}
-details{border-bottom:1px solid var(--line);padding:22px 0}
-details:first-of-type{border-top:1px solid var(--line)}
-summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:24px;font-weight:700;font-size:19px}
+/* partners + faq on cream */
+.lower{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,5vw,72px);background:var(--cream);padding:clamp(56px,7vw,96px) clamp(18px,3vw,40px)}
+.lower h2{font-family:var(--display);font-weight:900;font-size:clamp(30px,3vw,44px);line-height:1;letter-spacing:-.03em}
+.lower .partners p{margin-top:14px;max-width:40ch}
+.lower a.link{display:inline-block;margin-top:18px;font-weight:700;text-decoration-color:var(--coral);text-underline-offset:6px;text-decoration-thickness:2px}
+details{border-bottom:2px solid var(--ink);padding:18px 0}
+details:first-of-type{border-top:2px solid var(--ink)}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:24px;font-family:var(--display);font-weight:800;font-size:22px}
 summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font-family:var(--display);font-size:26px;line-height:1;color:var(--accent);transition:transform .25s}
+summary::after{content:"+";font-size:28px;line-height:1;color:var(--coral);transition:transform .25s}
 details[open] summary::after{transform:rotate(45deg)}
-details p{margin-top:12px;color:var(--muted);max-width:56ch}
-@media (max-width:900px){.lower{grid-template-columns:1fr;gap:40px;padding:72px 0}}
+details p{margin-top:10px;max-width:56ch}
+@media (max-width:900px){.lower{grid-template-columns:1fr}}
 
-footer{padding:40px 0 56px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+footer{background:var(--ink);color:var(--cream);padding:28px clamp(18px,3vw,40px);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:14px}
 footer a{text-decoration:none}
-
-/* reveal */
-.rv{opacity:1}
-@media (prefers-reduced-motion:no-preference){
-  .js .rv{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
-  .js .rv.in{opacity:1;transform:none}
-  .hero > div:first-child > *{animation:rise .9s cubic-bezier(.16,1,.3,1) both}
-  .hero h1{animation-delay:.05s}.hero p{animation-delay:.15s}.hero .btn{animation-delay:.25s}
-}
-@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+:focus-visible{outline:3px solid var(--coral);outline-offset:3px;border-radius:4px}
 </style>
 </head>
 <body>
-<script>document.documentElement.classList.add('js')</script>
-<div class="wrap">
-  <nav aria-label="Main">
-    <a class="mark" href="/" aria-label="OnCue home">
-      <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0l2.4 7.2L21.6 4.8 16.8 12l4.8 7.2-7.2-2.4L12 24l-2.4-7.2-7.2 2.4L7.2 12 2.4 4.8l7.2 2.4z"/></svg>
-      OnCue
-    </a>
-    <a class="btn btn-ghost" href="mailto:hello@oncuecosmetics.com?subject=Founding%20circle">Join the circle</a>
-  </nav>
+<nav aria-label="Main">
+  <a class="mark" href="/" aria-label="OnCue home">
+    <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 0l2.4 7.2L21.6 4.8 16.8 12l4.8 7.2-7.2-2.4L12 24l-2.4-7.2-7.2 2.4L7.2 12 2.4 4.8l7.2 2.4z"/></svg>
+    OnCue
+  </a>
+  <a class="btn nav-cta" href="mailto:hello@oncuecosmetics.com?subject=Founding%20circle">Join the circle</a>
+</nav>
 
-  <section class="hero">
-    <div>
-      <h1>Colour,<br><em>on cue.</em></h1>
-      <p>Body art for whenever the moment calls. No skill needed. Made in India, coming soon.</p>
-      <a class="btn btn-primary" href="mailto:hello@oncuecosmetics.com?subject=Founding%20circle">Join the circle</a>
-    </div>
-    <div class="stage" aria-hidden="true">
-      <img class="on" src="img/look-teal.webp" alt="" width="614" height="768">
-      <img src="img/look-cobalt.webp" alt="" width="614" height="768" loading="lazy">
-      <img src="img/look-gold.webp" alt="" width="614" height="768" loading="lazy">
-    </div>
-  </section>
+<header class="hero">
+  <div class="hero-copy">
+    <h1>Colour,<br><em>on cue.</em></h1>
+    <p>Body art for whenever the moment calls. No skill needed. Made in India, coming soon.</p>
+    <a class="btn btn-ink" href="mailto:hello@oncuecosmetics.com?subject=Founding%20circle">Join the circle</a>
+  </div>
+  <div class="canvas-wrap" aria-hidden="true">
+    <img class="still" src="img/portrait-hero.webp" alt="" width="1126" height="1408">
+    <div class="cue-tag">cue <i><b></b></i></div>
+  </div>
+</header>
 
-  <section class="credo">
-    <p class="rv">No skill needed. No fear.</p>
-    <p class="rv">No judgement.</p>
-  </section>
+<section class="credo">
+  <p class="split">No skill needed. No fear.</p>
+  <p class="split">No judgement.</p>
+</section>
 
-  <section class="belief">
-    <h2 class="rv">Makeup isn't concealment. It's expression.</h2>
-    <div class="copy rv">
-      <p>So we don't call it makeup. We call it <strong>body art</strong>, because art doesn't ask you to fix yourself. It asks what you want to say.</p>
-      <p>For the artist who can do anything with a brush, and for anyone who loved colour but was too scared to wear it.</p>
-    </div>
-  </section>
+<section class="belief">
+  <div class="copy">
+    <h2 class="rise">Makeup isn't concealment. It's expression.</h2>
+    <p class="rise">So we don't call it makeup. We call it <strong>body art</strong>, because art doesn't ask you to fix yourself. It asks what you want to say.</p>
+    <p class="rise">For the artist who can do anything with a brush, and for anyone who loved colour but was too scared to wear it.</p>
+  </div>
+  <div class="art" aria-hidden="true"></div>
+</section>
 
-  <section class="promises">
-    <div class="p big rv">
-      <div class="tones" aria-hidden="true">
-        <span style="--skin:#F1D3BC"></span><span style="--skin:#E3B596"></span><span style="--skin:#C68B63"></span>
-        <span style="--skin:#A86E4A"></span><span style="--skin:#6E4630"></span><span style="--skin:#4A2F20"></span>
-      </div>
-      <h3>Whenever you want</h3>
-      <p>A Tuesday. A sangeet. A gig. A mood. OnCue is ready when you are.</p>
-    </div>
-    <div class="p tint rv">
-      <h3>Easy to wear</h3>
-      <p>Bold colour in moments, not hours. No brushes, no blending, no tutorials.</p>
-    </div>
-    <div class="p rv">
-      <h3>Honest by design</h3>
-      <p>Clear ingredient lists, nothing hidden. You'll know exactly what goes on your skin.</p>
-    </div>
-  </section>
+<section class="blocks">
+  <div class="block b1 rise">
+    <div class="dots" aria-hidden="true"><span style="--s:#F1D3BC"></span><span style="--s:#C68B63"></span><span style="--s:#8D5A3B"></span><span style="--s:#4A2F20"></span></div>
+    <h3>Whenever you want</h3>
+    <p>A Tuesday. A sangeet. A gig. A mood. OnCue is ready when you are.</p>
+  </div>
+  <div class="block b2 rise">
+    <h3>Easy to wear</h3>
+    <p>Bold colour in moments, not hours. No brushes, no blending, no tutorials.</p>
+  </div>
+  <div class="block b3 rise">
+    <h3>Honest by design</h3>
+    <p>Clear ingredient lists, nothing hidden. You'll know exactly what goes on your skin.</p>
+  </div>
+</section>
 
-  <section class="circle">
-    <div class="duo rv" aria-hidden="true">
-      <img src="img/portrait-hero.webp" alt="" width="1126" height="1408" loading="lazy">
-      <img src="img/look-man.webp" alt="" width="855" height="1068" loading="lazy">
-    </div>
-    <h2 class="rv">Be one of the first fifty.</h2>
-    <p class="rv">We're building OnCue with a small founding circle across every skin tone. Try it first, shape it, and tell us the truth.</p>
-    <a class="btn btn-primary rv" href="mailto:hello@oncuecosmetics.com?subject=Founding%20circle">Join the circle</a>
-  </section>
+<section class="circle">
+  <div class="duo" aria-hidden="true">
+    <img src="img/look-gold.webp" alt="" width="614" height="768" loading="lazy">
+    <img src="img/look-man.webp" alt="" width="855" height="1068" loading="lazy">
+  </div>
+  <div class="copy">
+    <h2 class="rise">Be one of the first fifty.</h2>
+    <p class="rise">We're building OnCue with a small founding circle across every skin tone. Try it first, shape it, and tell us the truth.</p>
+    <a class="btn btn-cream rise" href="mailto:hello@oncuecosmetics.com?subject=Founding%20circle">Join the circle</a>
+  </div>
+</section>
 
-  <section class="lower">
-    <div class="partners rv">
-      <h2>For makers and partners</h2>
-      <p>We work with manufacturers, converters and ingredient suppliers who take safety and colour seriously.</p>
-      <a class="link" href="mailto:hello@oncuecosmetics.com?subject=Partnership">hello@oncuecosmetics.com</a>
-    </div>
-    <div class="faq rv">
-      <details><summary>What is OnCue?</summary><p>A body art brand from India. Easy-to-wear colour that turns your body into your canvas.</p></details>
-      <details><summary>When can I buy it?</summary><p>Soon. The founding circle gets it first. Join and we'll write to you before anyone else hears.</p></details>
-      <details><summary>Who is it for?</summary><p>Anyone who wants to wear colour, whatever your skin tone, gender or skill level.</p></details>
-      <details><summary>Is it safe?</summary><p>Everything we make will follow India's cosmetics rules, and we'll publish what's inside each product.</p></details>
-    </div>
-  </section>
+<section class="lower">
+  <div class="partners">
+    <h2>For makers and partners</h2>
+    <p>We work with manufacturers, converters and ingredient suppliers who take safety and colour seriously.</p>
+    <a class="link" href="mailto:hello@oncuecosmetics.com?subject=Partnership">hello@oncuecosmetics.com</a>
+  </div>
+  <div class="faq">
+    <details><summary>What is OnCue?</summary><p>A body art brand from India. Easy-to-wear colour that turns your body into your canvas.</p></details>
+    <details><summary>When can I buy it?</summary><p>Soon. The founding circle gets it first. Join and we'll write to you before anyone else hears.</p></details>
+    <details><summary>Who is it for?</summary><p>Anyone who wants to wear colour, whatever your skin tone, gender or skill level.</p></details>
+    <details><summary>Is it safe?</summary><p>Everything we make will follow India's cosmetics rules, and we'll publish what's inside each product.</p></details>
+  </div>
+</section>
 
-  <footer>
-    <span>© 2026 OnCue Cosmetics</span>
-    <a href="mailto:hello@oncuecosmetics.com">hello@oncuecosmetics.com</a>
-  </footer>
-</div>
-<script>
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
-  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
-  const frames=[...document.querySelectorAll('.stage img')];
-  if(frames.length>1 && !matchMedia('(prefers-reduced-motion: reduce)').matches){
-    let k=0;setInterval(()=>{frames[k].classList.remove('on');k=(k+1)%frames.length;frames[k].classList.add('on')},3400);
-  }
+<footer>
+  <span>© 2026 OnCue Cosmetics</span>
+  <a href="mailto:hello@oncuecosmetics.com">hello@oncuecosmetics.com</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* GSAP: word reveal + block rise */
+if (window.gsap && !reduce) {
+  gsap.registerPlugin(ScrollTrigger);
+  document.querySelectorAll('.split').forEach(p => {
+    p.innerHTML = p.textContent.trim().split(' ').map(w => `<span class="w">${w}</span>`).join('');
+  });
+  gsap.from('.credo .w', { yPercent: 110, opacity: 0, duration: .9, ease: 'expo.out', stagger: .07,
+    scrollTrigger: { trigger: '.credo', start: 'top 75%' } });
+  gsap.utils.toArray('.rise').forEach(el => gsap.from(el, { y: 40, opacity: 0, duration: .9, ease: 'expo.out',
+    scrollTrigger: { trigger: el, start: 'top 88%' } }));
+  gsap.from('.hero-copy > *', { y: 36, opacity: 0, duration: 1, ease: 'expo.out', stagger: .08, delay: .1 });
+}
+
+/* Three.js: each cue paints the next look over the last */
+const wrap = document.querySelector('.canvas-wrap');
+const LOOKS = ['img/portrait-hero.webp', 'img/look-cobalt.webp', 'img/look-violet.webp', 'img/look-gold.webp', 'img/look-teal.webp'];
+async function initGL() {
+  if (reduce || !window.gsap) return;
+  let THREE;
+  try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js'); } catch (e) { return; }
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: false }); } catch (e) { return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  wrap.prepend(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const loader = new THREE.TextureLoader();
+  const load = src => new Promise(r => loader.load(src, t => { t.minFilter = THREE.LinearFilter; r(t); }));
+  const tex = await Promise.all(LOOKS.map(load));
+  const size = t => new THREE.Vector2(t.image.width, t.image.height);
+  const u = {
+    tA: { value: tex[0] }, tB: { value: tex[1] }, rA: { value: size(tex[0]) }, rB: { value: size(tex[1]) },
+    uRes: { value: new THREE.Vector2(1, 1) }, uP: { value: 0 }, uT: { value: 0 }, uM: { value: new THREE.Vector2(.5, .5) }
+  };
+  const mat = new THREE.ShaderMaterial({
+    uniforms: u,
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }`,
+    fragmentShader: `
+      precision highp float;
+      varying vec2 vUv;
+      uniform sampler2D tA, tB; uniform vec2 rA, rB, uRes, uM; uniform float uP, uT;
+      vec2 cover(vec2 uv, vec2 img){ float rs = uRes.x/uRes.y, ri = img.x/img.y;
+        vec2 s = rs > ri ? vec2(1., ri/rs) : vec2(rs/ri, 1.); return (uv - .5) * s + .5; }
+      float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
+        return mix(mix(h(i), h(i+vec2(1,0)), f.x), mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x), f.y); }
+      float fbm(vec2 p){ float v = 0., a = .5; for(int i=0;i<5;i++){ v += a*n(p); p *= 2.03; a *= .5; } return v; }
+      void main(){
+        vec2 uv = vUv;
+        uv += (uM - .5) * .012 + (fbm(uv*3. + uT*.04) - .5) * .004;
+        float front = (uv.x*.65 + (1.-uv.y)*.35) + (fbm(uv*vec2(6.,2.5) + 7.3) - .5)*.55;
+        float m = smoothstep(uP*1.5 - .25, uP*1.5 - .05, front);
+        vec4 a = texture2D(tA, cover(uv, rA));
+        vec4 b = texture2D(tB, cover(uv, rB));
+        float edge = smoothstep(.0, .06, abs(front - (uP*1.5 - .15)));
+        vec4 col = mix(b, a, m);
+        col.rgb *= mix(.82, 1., edge);
+        gl_FragColor = col;
+      }`
+  });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+  const resize = () => { const r = wrap.getBoundingClientRect(); renderer.setSize(r.width, r.height, false);
+    renderer.domElement.style.width = '100%'; renderer.domElement.style.height = '100%'; u.uRes.value.set(r.width, r.height); };
+  resize(); addEventListener('resize', resize);
+  wrap.addEventListener('pointermove', e => { const r = wrap.getBoundingClientRect();
+    gsap.to(u.uM.value, { x: (e.clientX - r.left) / r.width, y: 1 - (e.clientY - r.top) / r.height, duration: 1.2, ease: 'power3.out' }); });
+  wrap.classList.add('gl');
+  let i = 0, visible = true;
+  new IntersectionObserver(([en]) => visible = en.isIntersecting).observe(wrap);
+  const bar = document.querySelector('.cue-tag b');
+  const cue = () => {
+    const next = (i + 1) % tex.length;
+    u.tA.value = tex[i]; u.rA.value = size(tex[i]); u.tB.value = tex[next]; u.rB.value = size(tex[next]); u.uP.value = 0;
+    gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 4, ease: 'none' });
+    gsap.to(u.uP, { value: 1, duration: 1.8, ease: 'power2.inOut', delay: 2.2, onComplete: () => { i = next; } });
+  };
+  cue(); setInterval(() => visible && cue(), 4200);
+  const tick = t => { u.uT.value = t / 1000; if (visible) renderer.render(scene, camera); requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+initGL();
 </script>
 </body>
 </html>
