@@ -6,6 +6,10 @@
 <title>OnCue Cosmetics | Colour, on cue</title>
 <meta name="description" content="OnCue makes body art you can wear whenever the moment calls. No skill needed. Made in India. Coming soon.">
 <meta name="robots" content="noindex">
+<meta property="og:title" content="OnCue Cosmetics | Colour, on cue">
+<meta property="og:description" content="Body art for whenever the moment calls. Made in India. Coming soon.">
+<meta property="og:image" content="https://oncuecosmetics.com/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
 <style>
@@ -44,24 +48,10 @@ nav{height:72px;display:flex;align-items:center;justify-content:space-between}
 .hero h1 em{font-style:normal;color:var(--accent)}
 .hero p{margin-top:28px;max-width:30ch;font-size:20px;color:var(--muted)}
 .hero .btn{margin-top:36px}
-.stage{height:min(78dvh,660px);aspect-ratio:4/5;justify-self:end;border-radius:var(--r);overflow:hidden;
-  --skin:#6B4430;--bgc:#F2E94E;--block:#E84A8A;--lid:#2EC4B6;--lid2:#E84A8A;--lip:#B3123A;--star:#FFFFFF;--garment:#1E1A2E}
-.stage svg{width:100%;height:100%;display:block}
-.stage .bg{fill:var(--bgc)}.stage .block{fill:var(--block)}
-.stage .skin{fill:var(--skin)}.stage .shade{fill:color-mix(in srgb,var(--skin) 76%,#000)}
-.stage .hair{fill:#14100D}.stage .streak{stroke:var(--block)}.stage .garment{fill:var(--garment)}
-.stage .lip{fill:var(--lip)}.stage .blush{fill:var(--lid2);opacity:.35}
-.stage .bg,.stage .block,.stage .skin,.stage .shade,.stage .lip,.stage .blush,.stage .streak,.stage .garment{transition:fill .7s,stroke .7s}
-.stage .lids path{fill:var(--lid);opacity:0;transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.3);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
-.stage .wing path,.stage .lower path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .45s cubic-bezier(.16,1,.3,1) .35s}
-.stage .lower path{stroke:var(--lid2)}
-.stage .eye{transform-box:fill-box;transform-origin:center;transition:transform .12s}
-.stage.blink .eye{transform:scaleY(.08)}
-.stage .stars path{fill:var(--star);opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.2) rotate(-40deg);transition:opacity .4s,transform .55s cubic-bezier(.34,1.56,.64,1)}
-.stage.cue .lids path{opacity:.92;transform:none}
-.stage.cue .wing path,.stage.cue .lower path{stroke-dashoffset:0}
-.stage.cue .stars path{opacity:1;transform:none}
-.stage.cue .stars path:nth-child(1){transition-delay:.55s}.stage.cue .stars path:nth-child(2){transition-delay:.65s}.stage.cue .stars path:nth-child(3){transition-delay:.75s}
+.stage{position:relative;height:min(78dvh,660px);aspect-ratio:4/5;justify-self:end;border-radius:var(--r);overflow:hidden;background:#E3A21A}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 3.4s cubic-bezier(.16,1,.3,1)}
+.stage img.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.stage img{transition:none;transform:none}}
 
 @media (max-width:900px){
   .hero{grid-template-columns:1fr;min-height:auto;padding-top:8px}
@@ -96,6 +86,8 @@ nav{height:72px;display:flex;align-items:center;justify-content:space-between}
 
 /* circle */
 .circle{padding:112px 0;border-top:1px solid var(--line);text-align:center}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:760px;margin:0 auto 56px}
+.duo img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r);display:block}
 .circle h2{font-family:var(--display);font-weight:800;font-size:clamp(40px,6vw,84px);line-height:1;letter-spacing:-.035em}
 .circle p{margin:22px auto 0;max-width:46ch;color:var(--muted);font-size:19px}
 .circle .btn{margin-top:34px}
@@ -147,62 +139,9 @@ footer a{text-decoration:none}
       <a class="btn btn-primary" href="mailto:hello@oncuecosmetics.com?subject=Founding%20circle">Join the circle</a>
     </div>
     <div class="stage" aria-hidden="true">
-      <svg viewBox="0 0 400 500" role="presentation">
-        <defs>
-          <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
-          <filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
-          <clipPath id="frame"><rect width="400" height="500"/></clipPath>
-        </defs>
-        <g clip-path="url(#frame)">
-          <rect class="bg" width="400" height="500"/>
-          <circle class="block" cx="300" cy="150" r="170"/>
-          <path class="hair" d="M98 200C90 110 150 52 214 52C284 52 330 112 324 200C320 280 340 360 356 430L300 440C290 400 284 360 286 320L130 320C128 360 122 400 108 440L58 430C78 360 100 280 98 200Z"/>
-          <path class="garment" d="M40 500C64 432 132 408 206 418C280 408 344 432 364 500Z"/>
-          <path class="skin" d="M178 340L176 422Q206 440 238 422L236 336Z"/>
-          <path class="shade" d="M178 360L178 402Q200 396 236 372L236 352Q206 372 178 360Z"/>
-          <path d="M176 394Q207 408 240 394" fill="none" stroke="#14100D" stroke-width="7" stroke-linecap="round"/>
-          <path d="M196 404l6 14 6-14M216 404l6 14 6-14" fill="#C9CCD1" stroke="#14100D" stroke-width="1.5"/>
-          <g class="head" transform="rotate(-6 210 260)"><path class="skin" d="M150 140C170 96 262 92 284 150C300 198 296 268 268 320C250 352 226 370 206 370C180 370 156 350 142 312C126 268 132 186 150 140Z" stroke="#14100D" stroke-width="2.5"/>
-          <path class="shade" d="M150 140C132 186 126 268 142 312C156 350 180 370 206 370C186 352 168 318 162 280C156 236 158 180 176 128C166 128 156 132 150 140Z"/>
-          <ellipse class="blush" cx="160" cy="276" rx="28" ry="14" filter="url(#soft)"/>
-          <ellipse class="blush" cx="264" cy="268" rx="24" ry="12" filter="url(#soft)"/>
-          <g transform="translate(-42 -46) scale(1.2)"><g class="lids">
-            <path d="M136 232C148 194 188 190 202 226C186 210 156 210 136 232Z"/>
-            <path d="M220 224C236 188 276 190 286 222C268 206 240 206 220 224Z"/>
-          </g>
-          <g class="eye">
-            <path d="M146 232Q168 216 194 230Q170 242 146 232Z" fill="#FBF7F2"/>
-            <circle cx="171" cy="231" r="8.5" fill="#14100D"/>
-            <path d="M228 226Q250 210 274 224Q252 238 228 226Z" fill="#FBF7F2"/>
-            <circle cx="252" cy="226" r="8.5" fill="#14100D"/>
-          </g>
-          <g class="lidline" fill="none" stroke="#14100D" stroke-width="5" stroke-linecap="round">
-            <path d="M143 232Q168 210 196 229"/><path d="M225 226Q250 204 276 223"/>
-          </g>
-          <g fill="none" stroke="#14100D" stroke-width="3" stroke-linecap="round"><path d="M146 228l-8-8M150 224l-5-10M282 220l9-7M276 216l6-10"/></g>
-          <g class="wing" fill="none" stroke="#14100D" stroke-width="4.5" stroke-linecap="round">
-            <path d="M143 232L130 222" pathLength="1"/><path d="M276 223L300 204" pathLength="1"/>
-          </g>
-          <g class="lower" fill="none" stroke-width="3" stroke-linecap="round">
-            <path d="M152 238Q170 246 190 236" pathLength="1"/><path d="M234 232Q252 240 270 230" pathLength="1"/>
-          </g>
-          </g><g fill="none" stroke="#14100D" stroke-width="7" stroke-linecap="round">
-            <path d="M140 196Q166 178 196 190"/><path d="M228 186Q256 174 284 190"/>
-          </g>
-          <path d="M214 238Q204 272 214 286Q222 291 230 283" fill="none" stroke="#14100D" stroke-width="2.5" stroke-linecap="round"/>
-          <path class="lip" d="M180 314Q198 300 210 308Q222 300 240 314Q212 340 180 314Z"/>
-          <path d="M182 315Q210 320 238 315" fill="none" stroke="#14100D" stroke-width="2"/>
-          <path d="M200 324Q210 328 220 324" fill="none" stroke="#FFFFFF" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>
-          <path class="hair" d="M140 170C138 110 180 82 214 82C258 82 292 112 290 168L274 152L264 174L250 148L234 176L218 148L202 176L188 148L172 174L158 152Z"/>
-          <path class="streak" d="M226 86C252 92 276 112 282 150" fill="none" stroke-width="6" stroke-linecap="round"/>
-          </g><g class="stars" transform="rotate(-6 210 260)">
-            <path d="M274 246l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/>
-            <path d="M292 270l2.4 6.4 6.4 2.4-6.4 2.4-2.4 6.4-2.4-6.4-6.4-2.4 6.4-2.4z"/>
-            <path d="M262 286l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
-          </g>
-          <rect width="400" height="500" filter="url(#grain)" opacity=".24" style="mix-blend-mode:multiply"/>
-        </g>
-      </svg>
+      <img class="on" src="img/look-teal.webp" alt="" width="614" height="768">
+      <img src="img/look-cobalt.webp" alt="" width="614" height="768" loading="lazy">
+      <img src="img/look-gold.webp" alt="" width="614" height="768" loading="lazy">
     </div>
   </section>
 
@@ -239,6 +178,10 @@ footer a{text-decoration:none}
   </section>
 
   <section class="circle">
+    <div class="duo rv" aria-hidden="true">
+      <img src="img/portrait-hero.webp" alt="" width="1126" height="1408" loading="lazy">
+      <img src="img/look-man.webp" alt="" width="855" height="1068" loading="lazy">
+    </div>
     <h2 class="rv">Be one of the first fifty.</h2>
     <p class="rv">We're building OnCue with a small founding circle across every skin tone. Try it first, shape it, and tell us the truth.</p>
     <a class="btn btn-primary rv" href="mailto:hello@oncuecosmetics.com?subject=Founding%20circle">Join the circle</a>
@@ -266,20 +209,9 @@ footer a{text-decoration:none}
 <script>
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
   document.querySelectorAll('.rv').forEach(el=>io.observe(el));
-  const st=document.querySelector('.stage');
-  const looks=[
-    {skin:'#6B4430',bgc:'#F2E94E',block:'#E84A8A',lid:'#2EC4B6',lid2:'#E84A8A',lip:'#B3123A',star:'#FFFFFF',garment:'#1E1A2E'},
-    {skin:'#E7B898',bgc:'#2EC4B6',block:'#F25C2A',lid:'#F5D547',lid2:'#F25C2A',lip:'#8B1E3F',star:'#F25C2A',garment:'#14100D'},
-    {skin:'#A9704E',bgc:'#E8473C',block:'#2B3A8F',lid:'#9B5DE5',lid2:'#F5D547',lip:'#5C1A3A',star:'#F5D547',garment:'#2B3A8F'},
-    {skin:'#4E3022',bgc:'#9B5DE5',block:'#F5D547',lid:'#FF7AA2',lid2:'#2EC4B6',lip:'#D7263D',star:'#F5D547',garment:'#14100D'},
-    {skin:'#D49A72',bgc:'#FF7AA2',block:'#1F6E5A',lid:'#3DB2FF',lid2:'#F5D547',lip:'#C2185B',star:'#FFFFFF',garment:'#1F6E5A'}];
-  if(st){
-    const apply=l=>Object.entries(l).forEach(([k,v])=>st.style.setProperty('--'+k,v));
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches){apply(looks[0]);st.classList.add('cue')}
-    else{let k=0;const step=()=>{st.classList.remove('cue');
-      setTimeout(()=>apply(looks[k++%looks.length]),300);
-      setTimeout(()=>st.classList.add('blink'),700);setTimeout(()=>st.classList.remove('blink'),860);
-      setTimeout(()=>st.classList.add('cue'),900)};step();setInterval(step,3600)}
+  const frames=[...document.querySelectorAll('.stage img')];
+  if(frames.length>1 && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    let k=0;setInterval(()=>{frames[k].classList.remove('on');k=(k+1)%frames.length;frames[k].classList.add('on')},3400);
   }
 </script>
 </body>
