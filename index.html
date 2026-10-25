@@ -344,7 +344,7 @@ async function initStage() {
 
   // camera beats: where it looks (image px), how much height it frames, sideways orbit
   const beat = (x, y, h, o) => { const [wx, wy] = px(x, y); return { x: wx, y: wy, h, o }; };
-  const K = [beat(512, 760, 3.5, 0), beat(600, 345, 1.05, .35), beat(420, 470, 1.15, -.35), beat(500, 172, .38, .12), beat(512, 760, 3.9, -.25)];
+  const K = [beat(512, 760, 3.5, 0), beat(590, 330, 1.2, .35), beat(445, 385, 1.36, -.3), beat(500, 172, .38, .12), beat(512, 760, 3.9, -.25)];
   const cam = { ...K[0] };
   const rgb = hex => { const c = new THREE.Color(hex); return { r: c.r, g: c.g, b: c.b }; };
 
