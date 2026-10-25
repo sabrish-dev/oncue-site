@@ -34,6 +34,8 @@ nav{position:absolute;top:0;left:0;right:0;z-index:20;height:72px;display:flex;a
 .star{width:22px;height:22px;color:var(--pink)}
 @media (prefers-reduced-motion:no-preference){.star{animation:spin 18s linear infinite}}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* blended grain over a live WebGL canvas costs phones a full recomposite per frame */
+@media (pointer:coarse),(max-width:900px){body::after{display:none}}
 .btn{display:inline-flex;align-items:center;height:50px;padding:0 26px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;white-space:nowrap;transition:transform .2s cubic-bezier(.16,1,.3,1)}
 .btn:active{transform:scale(.98)}
 .btn-ink{background:var(--ink);color:var(--cream)}
@@ -250,18 +252,19 @@ async function initStage() {
   try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js'); } catch (e) { return; }
   THREE.ColorManagement.enabled = false; // raw ShaderMaterials: keep hex colours as authored
   let renderer;
-  try { renderer = new THREE.WebGLRenderer({ antialias: true }); } catch (e) { return; }
+  const lite = matchMedia('(pointer: coarse)').matches || innerWidth < 900; // phones: lighter everything
+  try { renderer = new THREE.WebGLRenderer({ antialias: !lite, powerPreference: 'high-performance' }); } catch (e) { return; }
   const loader = new THREE.TextureLoader();
   const load = src => new Promise((res, rej) => loader.load(src, t => {
     t.anisotropy = renderer.capabilities.getMaxAnisotropy(); res(t); }, undefined, rej));
-  let fig, dep, artS, artA, artE, close, artC;
+  let fig, dep, artS, artA, artE, close, artC, nz;
   try {
-    [fig, dep, artS, artA, artE, close, artC] = await Promise.all(['figure', 'depth', 'art-shoulder', 'art-arm', 'art-face', 'closeup', 'art-closeup']
+    [fig, dep, artS, artA, artE, close, artC, nz] = await Promise.all(['figure', 'depth', 'art-shoulder', 'art-arm', 'art-face', 'closeup', 'art-closeup', 'noise']
       .map(n => load(`img/stage/${n}.webp`)));
   } catch (e) { return; }
 
   const pin = stage.querySelector('.stage-pin');
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, lite ? 1.5 : 2));
   pin.prepend(renderer.domElement);
   stage.classList.add('live');
 
@@ -270,34 +273,28 @@ async function initStage() {
   const px = (x, y) => [(x - 512) / 512, (768 - y) / 512]; // image px -> world (figure is 2 x 3 units)
   const FLOOR = px(0, 1502)[1], WALL = -1.4;
 
-  const noise = `
-    float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-    float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
-      return mix(mix(h(i), h(i+vec2(1,0)), f.x), mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x), f.y); }
-    float fbm(vec2 p){ float v = 0., a = .5; for(int i=0;i<4;i++){ v += a*n(p); p *= 2.03; a *= .5; } return v; }`;
+  // dissolve noise is baked (img/stage/noise.webp: one fbm field per art layer), so shaders do one fetch, not 8 octaves
 
   // the set: back wall with a disc behind her, floor with a contact shadow
   const set = { wall: new THREE.Color('#FFD62E'), floor: new THREE.Color('#EF3E8C'), disc: new THREE.Color('#EF3E8C') };
   const setVS = `varying vec3 vP; void main(){ vec4 w = modelMatrix * vec4(position, 1.); vP = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`;
   const wall = new THREE.Mesh(new THREE.PlaneGeometry(60, 30), new THREE.ShaderMaterial({
     uniforms: { uC: { value: set.wall }, uD: { value: set.disc } }, vertexShader: setVS,
-    fragmentShader: `varying vec3 vP; uniform vec3 uC, uD; ${noise}
+    fragmentShader: `varying vec3 vP; uniform vec3 uC, uD;
       void main(){
         float r = length(vP.xy - vec2(0., .35));
-        vec3 c = mix(uD, uC, smoothstep(1.34, 1.36, r + (fbm(vP.xy*3.) - .5)*.02));
+        vec3 c = mix(uD, uC, smoothstep(1.34, 1.36, r));
         c *= 1. + .08*exp(-r*r*.5) - .14*smoothstep(2.5, 9., length(vP.xy));
-        c *= .96 + .08*fbm(vP.xy*40.);
         gl_FragColor = vec4(c, 1.);
       }` }));
   wall.position.set(0, FLOOR + 15, WALL);
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShaderMaterial({
     uniforms: { uC: { value: set.floor } }, vertexShader: setVS,
-    fragmentShader: `varying vec3 vP; uniform vec3 uC; ${noise}
+    fragmentShader: `varying vec3 vP; uniform vec3 uC;
       void main(){
         vec3 c = uC * (.9 + .1*smoothstep(${WALL.toFixed(2)}, 1.5, vP.z));
         float sh = exp(-(vP.x*vP.x/.16 + vP.z*vP.z/.02));
         c *= 1. - .42*sh;
-        c *= .96 + .08*fbm(vP.xz*40.);
         gl_FragColor = vec4(c, 1.);
       }` }));
   floor.rotation.x = -Math.PI / 2; floor.position.set(0, FLOOR, WALL + 30);
@@ -305,43 +302,44 @@ async function initStage() {
 
   // the figure: a depth-pushed card; art layers dissolve on like wet paint
   const art = { rS: 0, rA: 0, rE: 0 };
-  const fu = { tF: { value: fig }, tD: { value: dep }, tS: { value: artS }, tA: { value: artA }, tE: { value: artE },
+  const fu = { tN: { value: nz }, tF: { value: fig }, tD: { value: dep }, tS: { value: artS }, tA: { value: artA }, tE: { value: artE },
     rS: { value: 0 }, rA: { value: 0 }, rE: { value: 0 } };
-  const figure = new THREE.Mesh(new THREE.PlaneGeometry(2, 3, 160, 240), new THREE.ShaderMaterial({
+  const figure = new THREE.Mesh(new THREE.PlaneGeometry(2, 3, lite ? 80 : 160, lite ? 120 : 240), new THREE.ShaderMaterial({
     uniforms: fu, transparent: true,
     vertexShader: `uniform sampler2D tD; varying vec2 vUv;
       void main(){ vUv = uv; vec3 p = position; p.z += texture2D(tD, uv).r * .2;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.); }`,
     fragmentShader: `precision highp float; varying vec2 vUv;
-      uniform sampler2D tF, tS, tA, tE; uniform float rS, rA, rE; ${noise}
-      vec3 paint(vec3 base, sampler2D t, float r, float seed){
+      uniform sampler2D tN, tF, tS, tA, tE; uniform float rS, rA, rE;
+      vec3 paint(vec3 base, sampler2D t, float r, float v){
+        if (r <= 0.) return base;
         vec4 a = texture2D(t, vUv);
-        float v = fbm(vUv*vec2(34., 51.) + seed)*.7 + fbm(vUv*vec2(5., 7.5) + seed*2.)*.3;
         float m = smoothstep(v - .05, v + .01, mix(-.1, 1.05, r));
         return mix(base, a.rgb, a.a * m);
       }
       void main(){
         vec4 b = texture2D(tF, vUv);
         if (b.a < .02) discard;
-        vec3 c = paint(b.rgb, tS, rS, 1.7);
-        c = paint(c, tA, rA, 4.1);
-        c = paint(c, tE, rE, 8.3);
+        vec3 n = texture2D(tN, vUv).rgb;
+        vec3 c = paint(b.rgb, tS, rS, n.r);
+        c = paint(c, tA, rA, n.g);
+        c = paint(c, tE, rE, n.b);
         gl_FragColor = vec4(c, b.a);
       }` }));
   scene.add(figure);
 
   // hi-res close-up, scaled so its eyes sit on the full-body eyes; cross-fades in for the face beat
   const cu = { fade: 0, r: 0 };
-  const cuU = { tC: { value: close }, tE: { value: artC }, uFade: { value: 0 }, rE: { value: 0 } };
+  const cuU = { tN: { value: nz }, tC: { value: close }, tE: { value: artC }, uFade: { value: 0 }, rE: { value: 0 } };
   const closeMesh = new THREE.Mesh(new THREE.PlaneGeometry(.5813, .7205), new THREE.ShaderMaterial({
     uniforms: cuU, transparent: true, depthWrite: false,
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
     fragmentShader: `precision highp float; varying vec2 vUv;
-      uniform sampler2D tC, tE; uniform float uFade, rE; ${noise}
+      uniform sampler2D tN, tC, tE; uniform float uFade, rE;
       void main(){
         vec4 b = texture2D(tC, vUv);
         vec4 a = texture2D(tE, vUv);
-        float v = fbm(vUv*vec2(30., 37.) + 8.3)*.7 + fbm(vUv*vec2(4.5, 5.6) + 16.6)*.3;
+        float v = texture2D(tN, vUv).b;
         vec3 c = mix(b.rgb, a.rgb, a.a * smoothstep(v - .05, v + .01, mix(-.1, 1.05, rE)));
         float edge = smoothstep(0., .3, vUv.y) * smoothstep(0., .06, vUv.x) * smoothstep(1., .94, vUv.x);
         gl_FragColor = vec4(c, b.a * edge * uFade);
@@ -398,9 +396,15 @@ async function initStage() {
   let visible = true;
   new IntersectionObserver(([en]) => visible = en.isIntersecting).observe(stage);
   const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  let last = '', dirty = true;
+  addEventListener('resize', () => dirty = true);
   const tick = () => {
     requestAnimationFrame(tick);
     if (!visible) return;
+    const key = [cam.x, cam.y, cam.h, cam.o, art.rS, art.rA, art.rE, cu.fade, cu.r, ptr.x, ptr.y,
+      set.wall.r, set.wall.g, set.wall.b].map(v => v.toFixed(4)).join();
+    if (key === last && !dirty) return;   // nothing moved: skip the frame entirely
+    last = key; dirty = false;
     fu.rS.value = art.rS; fu.rA.value = art.rA; fu.rE.value = art.rE;
     cuU.uFade.value = cu.fade; cuU.rE.value = cu.r; closeMesh.visible = cu.fade > .001;
     const narrow = camera.aspect < 1;
