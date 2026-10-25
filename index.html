@@ -64,9 +64,15 @@ nav{position:absolute;top:0;left:0;right:0;z-index:20;height:72px;display:flex;a
 .stage.live{height:640vh}
 .stage.live .stage-pin{position:sticky;top:0;height:100dvh;display:block;overflow:hidden}
 .stage.live .stage-poster{display:none}
-.stage.live .beats{position:absolute;z-index:2;left:0;bottom:0;width:min(46%,640px);padding:0 clamp(18px,3vw,40px) clamp(40px,7vh,72px);display:block;pointer-events:none}
+.stage.live .beats{position:absolute;z-index:2;left:0;top:0;bottom:0;width:min(46%,640px);padding:0 clamp(18px,3vw,40px) clamp(40px,7vh,72px);display:block;pointer-events:none}
 .stage.live .beat{position:absolute;left:clamp(18px,3vw,40px);right:0;bottom:clamp(40px,7vh,72px);visibility:hidden}
 .stage.live .beat.k0{visibility:visible}
+/* closing line sits wholly on the wall, clear of the floor seam */
+.stage.live .beat.k4{top:clamp(96px,15vh,150px);bottom:auto}
+/* run-out: her floor carries on past the scene so the next section has room to arrive */
+.stage-tail{display:none}
+.stage.live + .stage-tail{display:block;height:clamp(96px,18vh,200px);background:var(--pink)}
+@media (max-width:900px){.stage.live .beat.k4{top:auto;bottom:clamp(40px,7vh,72px)}}
 .stage.live .beat p{display:block}
 .stage.live .beat.k3{color:var(--cream)}
 .stage.live .beat .btn{pointer-events:auto}
@@ -164,6 +170,7 @@ footer a{text-decoration:none}
     <div class="rail" aria-hidden="true"><span class="rail-n">01</span><i><b></b></i><span>05</span></div>
   </div>
 </header>
+<div class="stage-tail" aria-hidden="true"></div>
 
 <section class="belief">
   <div class="copy">
